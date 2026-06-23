@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>KI als Lernbegleiter — Interaktiv</title>
+<style>
+  :root{
+    --bg:#0B0C10;--bg2:#13141c;--ink:#ECECF1;--muted:#8C8C9C;--faint:#5A5A68;
+    --line:rgba(255,255,255,.09);--amber:#E8A33D;--amber-soft:#f3c884;--cool:#6BA8C9;
+    --green:#6cc08a;--red:#e07b6b;
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{min-height:100vh;background:
+      radial-gradient(120% 80% at 80% 0%, rgba(232,163,61,.08), transparent 55%),
+      radial-gradient(90% 70% at 0% 100%, rgba(107,168,201,.06), transparent 50%),
+      var(--bg);
+    color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;
+    display:flex;flex-direction:column;align-items:center;padding:clamp(20px,4vw,60px) clamp(16px,4vw,40px)}
+  .wrap{width:100%;max-width:920px}
+
+  header{text-align:center;margin-bottom:clamp(28px,4vw,48px)}
+  .kicker{font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:var(--amber);font-weight:600;margin-bottom:14px}
+  h1{font-family:var(--serif);font-weight:600;font-size:clamp(30px,5vw,52px);line-height:1.05;letter-spacing:-.01em}
+  .sub{color:var(--muted);margin-top:14px;font-size:clamp(15px,1.7vw,18px)}
+
+  .tabs{display:flex;gap:8px;justify-content:center;margin-bottom:clamp(26px,3.5vw,40px);
+    background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:100px;padding:6px;width:fit-content;margin-left:auto;margin-right:auto}
+  .tab{border:none;background:none;color:var(--muted);font-family:var(--sans);font-size:clamp(14px,1.5vw,16px);
+    font-weight:600;padding:11px 26px;border-radius:100px;cursor:pointer;transition:.25s;letter-spacing:.01em}
+  .tab.on{background:linear-gradient(180deg,var(--amber),#d8902f);color:#1a1206;box-shadow:0 6px 20px rgba(232,163,61,.25)}
+
+  .panel{display:none;animation:fade .4s ease} .panel.on{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+  /* ——— quiz ——— */
+  .qcard{background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.01));
+    border:1px solid var(--line);border-radius:22px;padding:clamp(26px,3.5vw,46px)}
+  .qmeta{display:flex;justify-content:space-between;align-items:center;font-size:13px;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--faint);margin-bottom:22px}
+  .qbar{height:4px;background:rgba(255,255,255,.07);border-radius:4px;overflow:hidden;margin-bottom:28px}
+  .qbar>div{height:100%;width:0;background:linear-gradient(90deg,var(--amber),var(--amber-soft));transition:width .4s}
+  .qtext{font-family:var(--serif);font-size:clamp(22px,3vw,34px);line-height:1.22;margin-bottom:clamp(24px,3vw,36px)}
+  .opts{display:flex;flex-direction:column;gap:12px}
+  .opt{text-align:left;border:1px solid var(--line);background:rgba(255,255,255,.02);color:var(--ink);
+    font-family:var(--sans);font-size:clamp(15px,1.7vw,19px);padding:clamp(16px,1.8vw,22px) clamp(18px,2vw,26px);
+    border-radius:14px;cursor:pointer;transition:.2s;display:flex;gap:14px;align-items:center;line-height:1.35}
+  .opt:hover:not(.locked){border-color:var(--amber);background:rgba(232,163,61,.06)}
+  .opt .mark{width:26px;height:26px;border-radius:50%;border:1px solid var(--faint);flex:0 0 auto;
+    display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700}
+  .opt.correct{border-color:var(--green);background:rgba(108,192,138,.1)} .opt.correct .mark{border-color:var(--green);background:var(--green);color:#06210f}
+  .opt.wrong{border-color:var(--red);background:rgba(224,123,107,.1)} .opt.wrong .mark{border-color:var(--red);background:var(--red);color:#2a0c08}
+  .opt.locked{cursor:default}
+  .explain{margin-top:20px;padding:18px 22px;border-left:2px solid var(--amber);background:rgba(232,163,61,.05);
+    border-radius:0 12px 12px 0;color:var(--muted);font-size:clamp(14px,1.5vw,17px);line-height:1.5;display:none}
+  .explain.show{display:block;animation:fade .3s ease} .explain b{color:var(--amber-soft)}
+  .qnav{display:flex;justify-content:flex-end;margin-top:28px}
+  .btn{border:none;font-family:var(--sans);font-weight:600;font-size:clamp(15px,1.6vw,17px);padding:14px 32px;
+    border-radius:100px;cursor:pointer;transition:.2s;background:linear-gradient(180deg,var(--amber),#d8902f);color:#1a1206}
+  .btn:disabled{opacity:.35;cursor:not-allowed}
+  .btn.ghost{background:none;border:1px solid var(--line);color:var(--muted)}
+  .result{text-align:center;padding:clamp(20px,4vw,40px) 0}
+  .score{font-family:var(--serif);font-size:clamp(64px,14vw,150px);line-height:.9;
+    background:linear-gradient(180deg,#fff,var(--amber));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .score small{font-size:.3em;color:var(--muted);-webkit-text-fill-color:var(--muted)}
+  .verdict{font-size:clamp(18px,2.2vw,24px);margin:18px 0 30px;color:var(--ink)}
+
+  /* ——— prompt lab ——— */
+  label.fl{display:block;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--amber);font-weight:600;margin-bottom:12px}
+  .topic{width:100%;background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:14px;
+    color:var(--ink);font-family:var(--sans);font-size:clamp(16px,1.8vw,20px);padding:18px 22px;outline:none;transition:.2s}
+  .topic:focus{border-color:var(--amber);background:rgba(232,163,61,.05)}
+  .methods{display:flex;gap:10px;flex-wrap:wrap;margin:22px 0 28px}
+  .mbtn{border:1px solid var(--line);background:rgba(255,255,255,.02);color:var(--muted);font-family:var(--sans);
+    font-size:clamp(14px,1.5vw,16px);font-weight:600;padding:12px 22px;border-radius:100px;cursor:pointer;transition:.2s}
+  .mbtn:hover{border-color:var(--amber);color:var(--amber-soft)}
+  .mbtn.on{background:linear-gradient(180deg,var(--amber),#d8902f);color:#1a1206;border-color:transparent}
+  .ba{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:24px}
+  .box{border:1px solid var(--line);border-radius:18px;padding:clamp(20px,2.4vw,30px);background:rgba(255,255,255,.02)}
+  .box .tag{font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;margin-bottom:14px}
+  .box.before .tag{color:var(--red)} .box.after .tag{color:var(--green)}
+  .box p{font-family:var(--serif);font-size:clamp(15px,1.7vw,19px);line-height:1.5;color:var(--ink)}
+  .box.before p{color:var(--muted)}
+  .out{border:1px solid rgba(232,163,61,.35);border-radius:18px;padding:clamp(22px,2.6vw,32px);
+    background:rgba(232,163,61,.05);position:relative}
+  .out .tag{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);font-weight:700;margin-bottom:14px}
+  .out .promptbody{font-family:var(--serif);font-size:clamp(16px,1.9vw,22px);line-height:1.5;color:var(--amber-soft);white-space:pre-wrap}
+  .copy{position:absolute;top:18px;right:18px;border:1px solid var(--line);background:rgba(0,0,0,.2);color:var(--muted);
+    font-family:var(--sans);font-size:13px;font-weight:600;padding:8px 16px;border-radius:100px;cursor:pointer;transition:.2s}
+  .copy:hover{border-color:var(--amber);color:var(--amber-soft)}
+  .copy.done{color:var(--green);border-color:var(--green)}
+  .lab-hint{color:var(--faint);font-size:14px;text-align:center;margin-top:22px}
+
+  @media (max-width:680px){.ba{grid-template-columns:1fr}.tabs{width:100%}.tab{flex:1;padding:11px 10px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="kicker">Bildungsurlaub · Interaktiv</div>
+    <h1>Teste dich. Probier es aus.</h1>
+    <div class="sub">Quiz zur Standortbestimmung &amp; das Prompt-Labor zum Selbermachen.</div>
+  </header>
+
+  <div class="tabs">
+    <button class="tab on" data-t="quiz">Quiz</button>
+    <button class="tab" data-t="lab">Prompt-Labor</button>
+  </div>
+
+  <!-- QUIZ PANEL -->
+  <section class="panel on" id="quiz">
+    <div class="qcard" id="qcard"></div>
+  </section>
+
+  <!-- LAB PANEL -->
+  <section class="panel" id="lab">
+    <div class="qcard">
+      <label class="fl" for="topic">1 · Dein Thema</label>
+      <input class="topic" id="topic" placeholder="z. B. Photosynthese, Zinseszins, der Kalte Krieg …" autocomplete="off">
+      <label class="fl" for="m1" style="margin-top:26px">2 · Lernmethode wählen</label>
+      <div class="methods" id="methods">
+        <button class="mbtn on" data-m="0">Sokratisch fragen</button>
+        <button class="mbtn" data-m="1">Multi-Level erklären</button>
+        <button class="mbtn" data-m="2">Selbst erklären &amp; prüfen</button>
+        <button class="mbtn" data-m="3">Bloom-Lernreise</button>
+      </div>
+
+      <div class="ba">
+        <div class="box before"><div class="tag">✗ Faul gefragt</div><p id="before">„Erklär mir kurz das Thema."</p></div>
+        <div class="box after"><div class="tag">✓ Zum Denken gebracht</div><p id="afterShort">Die KI fragt <em>dich</em> — statt dir die Antwort abzunehmen.</p></div>
+      </div>
+
+      <label class="fl">3 · Dein fertiger Prompt</label>
+      <div class="out">
+        <button class="copy" id="copy">Kopieren</button>
+        <div class="tag" id="outTag">Sokratisch fragen</div>
+        <div class="promptbody" id="promptOut"></div>
+      </div>
+      <div class="lab-hint">Kopieren → in deine KI (Claude, ChatGPT, NotebookLM) einfügen → loslegen.</div>
+    </div>
+  </section>
+</div>
+
+<script>
+/* ===================== QUIZ ===================== */
+const QUESTIONS=[
+  {q:"Was ist ein großes Sprachmodell (LLM) im Kern?",
+   a:["Eine Datenbank mit geprüften Fakten","Eine Wahrscheinlichkeits-Maschine, die Muster fortsetzt","Eine Suchmaschine mit Quellenangabe","Ein denkendes, bewusstes System"],c:1,
+   e:"Ein LLM sagt das <b>statistisch wahrscheinlichste nächste Wort</b> voraus. Es ist ein brillanter Mustererkenner — kein Faktenspeicher und kein Bewusstsein. Deshalb halluziniert es überzeugend."},
+  {q:"Was zeigte die MIT-Studie „Your Brain on ChatGPT“ (2025)?",
+   a:["KI macht messbar produktiver","Reduzierte neuronale Konnektivität bei reiner KI-Nutzung","Keinerlei Effekt auf das Gehirn","Bessere Erinnerung an Gelerntes"],c:1,
+   e:"Die Forscher maßen eine <b>geringere neuronale Konnektivität</b> und nannten den Effekt „kognitive Schuld“: Wer auslagert, baut weniger eigenes Verständnis auf."},
+  {q:"Was bedeutet „Cognitive Offloading“?",
+   a:["Das Gehirn entspannt sich produktiv","Denkleistung an ein externes Werkzeug auslagern","Wissen langfristig abspeichern","Mehrere Aufgaben gleichzeitig lösen"],c:1,
+   e:"Du lagerst genau die <b>Denkanstrengung</b> aus, die Lernen erst erzeugt. Praktisch im Alltag — gefährlich beim Lernen."},
+  {q:"Welche Methode entspricht der sokratischen „Maieutik“?",
+   a:["Die KI erklärt dir alles in drei Sätzen","Die KI stellt dir stufenweise Fragen statt Antworten","Du kopierst die Antwort in deine Notizen","Die KI fasst ein Video zusammen"],c:1,
+   e:"<b>Maieutik</b> = Hebammenkunst des Denkens. Die KI führt dich mit Fragen zur eigenen Erkenntnis."},
+  {q:"Worauf beruht die Multi-Level-Erklärung (Kind / Student / Forscher)?",
+   a:["Auf der Feynman-Technik & dem Self-Explanation-Effekt","Auf Zufallsprinzip","Auf reiner Wiederholung","Auf Auswendiglernen"],c:0,
+   e:"Wer einen Stoff auf <b>drei Ebenen</b> erklären kann, hat ihn verstanden. Wo es hakt, sitzt die Wissenslücke."},
+  {q:"Was ist die UNTERSTE Stufe der Bloom-Taxonomie?",
+   a:["Kreieren","Evaluieren","Erinnern","Analysieren"],c:2,
+   e:"Reihenfolge: <b>Erinnern → Verstehen → Anwenden → Analysieren → Evaluieren → Kreieren.</b> Vom Fakt zur eigenen Idee."},
+  {q:"Was macht NotebookLM zu einem guten Lern-RAG?",
+   a:["Es erfindet kreative Zusatzinfos","Es antwortet nur aus deinen eigenen Quellen, mit Belegen","Es braucht eine komplexe Installation","Es ersetzt das eigene Nachdenken"],c:1,
+   e:"Ein <b>RAG</b> antwortet quellen-belegt aus deinem Material — drastisch weniger Halluzination, ideal zum sokratischen Befragen."},
+  {q:"Was meint Bjork mit „Desirable Difficulties“?",
+   a:["Lernen soll möglichst leicht sein","Anstrengung ist der Mechanismus des Lernens","Schwierigkeit ist immer schädlich","Nur Talent zählt"],c:1,
+   e:"<b>Wünschenswerte Schwierigkeiten:</b> Die Mühe ist kein Fehler des Lernens — sie ist der Grund, warum es funktioniert."},
+  {q:"Warum ein lokales KI-Gedächtnis (claude-mem / Wissensgraph)?",
+   a:["Damit der Anbieter mehr Daten bekommt","Für Datenhoheit — und damit die KI deinen Wissensstand kennt","Es ist nur schneller","Es ersetzt das Lernen komplett"],c:1,
+   e:"Dein Wissen bleibt <b>bei dir</b>. Gleichzeitig wächst der KI-Kontext mit dir: Sie weiß, wo du stehst, und schlägt den nächsten Schritt vor."},
+  {q:"Was ist die Kernhaltung dieses Kurses?",
+   a:["Die KI so oft wie möglich antworten lassen","Die KI zum Fragen bringen, damit DU denkst","KI beim Lernen ganz vermeiden","Antworten auswendig lernen"],c:1,
+   e:"<b>Bring die KI zum Fragen.</b> Nicht das LLM soll dich klüger wirken lassen — es soll dich klüger machen."}
+];
+let qi=0,score=0,answered=false;
+const qcard=document.getElementById('qcard');
+function renderQ(){
+  answered=false;
+  const Q=QUESTIONS[qi];
+  qcard.innerHTML=`
+    <div class="qmeta"><span>Frage ${qi+1} / ${QUESTIONS.length}</span><span>Punkte ${score}</span></div>
+    <div class="qbar"><div style="width:${(qi)/QUESTIONS.length*100}%"></div></div>
+    <div class="qtext">${Q.q}</div>
+    <div class="opts">${Q.a.map((t,n)=>`<button class="opt" data-n="${n}">
+       <span class="mark">${String.fromCharCode(65+n)}</span><span>${t}</span></button>`).join('')}</div>
+    <div class="explain" id="explain"></div>
+    <div class="qnav"><button class="btn" id="nextBtn" disabled>${qi<QUESTIONS.length-1?'Weiter':'Ergebnis'}</button></div>`;
+  qcard.querySelectorAll('.opt').forEach(o=>o.addEventListener('click',pick));
+  document.getElementById('nextBtn').addEventListener('click',nextQ);
+}
+function pick(e){
+  if(answered)return;answered=true;
+  const Q=QUESTIONS[qi];const n=+e.currentTarget.dataset.n;
+  const opts=qcard.querySelectorAll('.opt');
+  opts.forEach(o=>o.classList.add('locked'));
+  opts[Q.c].classList.add('correct');
+  if(n===Q.c){score++;} else{opts[n].classList.add('wrong');}
+  const ex=document.getElementById('explain');ex.innerHTML=Q.e;ex.classList.add('show');
+  qcard.querySelector('.qmeta').children[1].textContent='Punkte '+score;
+  qcard.querySelector('.qbar>div').style.width=((qi+1)/QUESTIONS.length*100)+'%';
+  document.getElementById('nextBtn').disabled=false;
+}
+function nextQ(){
+  if(qi<QUESTIONS.length-1){qi++;renderQ();window.scrollTo({top:0,behavior:'smooth'});}
+  else{showResult();}
+}
+function showResult(){
+  const pct=Math.round(score/QUESTIONS.length*100);
+  let verdict;
+  if(pct>=90)verdict="Exzellent — du hast die Haltung verinnerlicht.";
+  else if(pct>=70)verdict="Stark. Das Fundament sitzt.";
+  else if(pct>=50)verdict="Guter Start — die Vertiefung lohnt sich.";
+  else verdict="Genau dafür ist dieser Kurs da. Los geht's.";
+  qcard.innerHTML=`<div class="result">
+     <div class="score">${score}<small>/${QUESTIONS.length}</small></div>
+     <div class="verdict">${verdict}</div>
+     <button class="btn ghost" id="again">Nochmal</button></div>`;
+  document.getElementById('again').addEventListener('click',()=>{qi=0;score=0;renderQ();});
+}
+renderQ();
+
+/* ===================== PROMPT LAB ===================== */
+const T="(dein Thema)";
+const beforeEx=[
+  "„Erklär mir kurz das Thema.“",
+  "„Fass das Thema in 5 Punkten zusammen.“",
+  "„Schreib mir eine Zusammenfassung.“",
+  "„Gib mir die wichtigsten Fakten.“"
+];
+const tags=["Sokratisch fragen","Multi-Level erklären","Selbst erklären & prüfen","Bloom-Lernreise"];
+function build(m,topic){
+  const X=topic.trim()||T;
+  switch(m){
+    case 0:return `Agiere als sokratischer Tutor zum Thema „${X}“. Stelle mir durchdachte, stufenweise Fragen und führe mich durch gezieltes Nachfragen zum eigenständigen Denken — ohne mir die Antworten direkt zu geben. Beginne mit einer breiten Einstiegsfrage und baue auf meinen Antworten auf.`;
+    case 1:return `Erkläre mir „${X}“ auf drei Verständnisebenen:\n\nLevel 1 – für ein Kind (bildhaft, einfache Sprache, Alltags-Analogien)\nLevel 2 – für eine/n Studierende/n (strukturiert, fachlich solide)\nLevel 3 – für eine/n Wissenschaftler/in (tief, theoretisch, vernetzt)\n\nFrag mich danach, welche Ebene mir am meisten geholfen hat.`;
+    case 2:return `Ich erkläre dir jetzt „${X}“ selbst auf drei Ebenen (Kind / Studierende/r / Wissenschaftler/in). Analysiere danach jede meiner Erklärungen auf Verständlichkeit und fachliche Korrektheit. Gib mir pro Ebene: eine Bewertung (1–10), konkrete Missverständnisse und eine gezielte Rückfrage zur Vertiefung. — Ich beginne:`;
+    case 3:return `Erstelle mir eine Lernreise zu „${X}“ entlang der sechs Bloom-Stufen: Erinnern, Verstehen, Anwenden, Analysieren, Evaluieren, Kreieren. Gib mir zu jeder Stufe eine konkrete Aufgabe plus Feedbackkriterien. Warte nach jeder Stufe auf meine Antwort, bevor du zur nächsten gehst.`;
+  }
+}
+let curM=0;
+const topicEl=document.getElementById('topic'),outEl=document.getElementById('promptOut'),
+      outTag=document.getElementById('outTag'),beforeEl=document.getElementById('before');
+function refreshLab(){
+  outEl.textContent=build(curM,topicEl.value);
+  outTag.textContent=tags[curM];
+  beforeEl.textContent=beforeEx[curM];
+}
+document.querySelectorAll('.mbtn').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('.mbtn').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on');curM=+b.dataset.m;refreshLab();
+}));
+topicEl.addEventListener('input',refreshLab);
+const copyBtn=document.getElementById('copy');
+copyBtn.addEventListener('click',async()=>{
+  try{await navigator.clipboard.writeText(outEl.textContent);
+    copyBtn.textContent='Kopiert ✓';copyBtn.classList.add('done');
+    setTimeout(()=>{copyBtn.textContent='Kopieren';copyBtn.classList.remove('done');},1800);
+  }catch(e){
+    const r=document.createRange();r.selectNode(outEl);
+    getSelection().removeAllRanges();getSelection().addRange(r);
+    try{document.execCommand('copy');copyBtn.textContent='Kopiert ✓';}catch(_){}
+    getSelection().removeAllRanges();
+  }
+});
+refreshLab();
+
+/* ===================== TABS ===================== */
+document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
+  document.querySelectorAll('.panel').forEach(x=>x.classList.remove('on'));
+  t.classList.add('on');document.getElementById(t.dataset.t).classList.add('on');
+  window.scrollTo({top:0,behavior:'smooth'});
+}));
+</script>
+</body>
+</html>

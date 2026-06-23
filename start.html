@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>KI als Lernbegleiter — Bildungsurlaub</title>
+<style>
+  :root{
+    --bg:#0B0C10;
+    --bg2:#111219;
+    --ink:#ECECF1;
+    --muted:#8C8C9C;
+    --faint:#5A5A68;
+    --line:rgba(255,255,255,.08);
+    --amber:#E8A33D;
+    --amber-soft:#f3c884;
+    --cool:#6BA8C9;
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+  body{font-feature-settings:"ss01","kern","liga"}
+
+  .deck{position:fixed;inset:0}
+  .slide{
+    position:absolute;inset:0;
+    display:flex;flex-direction:column;justify-content:center;
+    padding:clamp(40px,7vw,120px);
+    opacity:0;visibility:hidden;
+    transform:translateY(24px) scale(.992);
+    transition:opacity .6s cubic-bezier(.22,.61,.36,1),transform .6s cubic-bezier(.22,.61,.36,1);
+    background:
+      radial-gradient(120% 90% at 78% 12%, rgba(232,163,61,.07), transparent 55%),
+      radial-gradient(90% 80% at 12% 92%, rgba(107,168,201,.05), transparent 50%),
+      var(--bg);
+  }
+  .slide.active{opacity:1;visibility:visible;transform:none;transition-delay:.05s}
+  .slide.past{transform:translateY(-24px) scale(.992)}
+
+  /* ——— typography ——— */
+  .kicker{
+    font-size:clamp(11px,1vw,13px);letter-spacing:.32em;text-transform:uppercase;
+    color:var(--amber);font-weight:600;margin-bottom:clamp(18px,2.4vw,34px);
+    display:flex;align-items:center;gap:14px;
+  }
+  .kicker::before{content:"";width:clamp(24px,3vw,48px);height:1px;background:var(--amber);opacity:.7}
+  h1{font-family:var(--serif);font-weight:600;line-height:1.04;letter-spacing:-.01em}
+  .xl{font-size:clamp(40px,7.2vw,104px)}
+  .lg{font-size:clamp(32px,5vw,68px)}
+  .md{font-size:clamp(26px,3.6vw,48px)}
+  .lead{font-size:clamp(17px,1.7vw,24px);color:var(--muted);line-height:1.5;max-width:60ch;margin-top:clamp(20px,2.4vw,32px);font-weight:380}
+  .lead strong{color:var(--ink);font-weight:600}
+  em.hl{font-style:normal;color:var(--amber-soft)}
+  .small{font-size:clamp(13px,1.2vw,16px)}
+
+  /* ——— chrome ——— */
+  .topbar{position:fixed;top:0;left:0;right:0;display:flex;justify-content:space-between;
+    padding:clamp(22px,3vw,40px) clamp(40px,7vw,120px);font-size:12px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--faint);z-index:30;pointer-events:none}
+  .topbar .day{color:var(--muted)}
+  .progress{position:fixed;left:0;bottom:0;height:3px;background:linear-gradient(90deg,var(--amber),var(--amber-soft));
+    width:0;z-index:30;transition:width .5s cubic-bezier(.22,.61,.36,1);box-shadow:0 0 14px rgba(232,163,61,.5)}
+  .counter{position:fixed;bottom:clamp(20px,3vw,34px);right:clamp(40px,7vw,120px);font-size:13px;
+    letter-spacing:.1em;color:var(--faint);z-index:30}
+  .counter b{color:var(--ink);font-weight:600}
+  .hint{position:fixed;bottom:clamp(20px,3vw,34px);left:clamp(40px,7vw,120px);font-size:12px;
+    letter-spacing:.06em;color:var(--faint);z-index:30;opacity:.8}
+  .hint kbd{font-family:var(--sans);border:1px solid var(--line);border-radius:5px;padding:1px 7px;
+    color:var(--muted);font-size:11px;margin:0 1px}
+
+  /* ——— components ——— */
+  .row{display:flex;gap:clamp(20px,2.4vw,40px);flex-wrap:wrap;margin-top:clamp(28px,3vw,46px)}
+  .card{
+    flex:1 1 0;min-width:200px;border:1px solid var(--line);border-radius:18px;
+    padding:clamp(22px,2.2vw,34px);background:linear-gradient(180deg,rgba(255,255,255,.025),rgba(255,255,255,0));
+    backdrop-filter:blur(2px);position:relative;overflow:hidden;
+  }
+  .card .n{font-family:var(--serif);font-size:clamp(20px,2vw,28px);color:var(--amber);opacity:.85;margin-bottom:12px}
+  .card h3{font-size:clamp(17px,1.6vw,21px);font-weight:600;margin-bottom:9px;letter-spacing:-.01em}
+  .card p{font-size:clamp(13px,1.15vw,15px);color:var(--muted);line-height:1.5}
+
+  .stat{font-family:var(--serif);font-size:clamp(72px,15vw,200px);line-height:.9;
+    background:linear-gradient(180deg,#fff,var(--amber));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .stat-cap{font-size:clamp(16px,1.6vw,22px);color:var(--muted);max-width:48ch;margin-top:18px;line-height:1.45}
+  .source{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-top:clamp(30px,4vw,56px)}
+
+  table.path{width:100%;border-collapse:collapse;margin-top:clamp(26px,3vw,44px);font-size:clamp(13px,1.25vw,17px)}
+  table.path th{text-align:left;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--amber);
+    font-weight:600;padding:0 18px 16px;border-bottom:1px solid var(--line)}
+  table.path td{padding:clamp(14px,1.5vw,20px) 18px;border-bottom:1px solid var(--line);color:var(--muted);vertical-align:top}
+  table.path td:first-child{color:var(--ink);font-weight:600;font-family:var(--serif);font-size:1.08em}
+  table.path tr:hover td{color:var(--ink)}
+
+  .prompt{border-left:2px solid var(--amber);background:rgba(232,163,61,.05);border-radius:0 14px 14px 0;
+    padding:clamp(22px,2.4vw,34px);font-family:var(--serif);font-size:clamp(18px,2vw,27px);line-height:1.45;
+    color:var(--amber-soft);max-width:70ch;margin-top:clamp(24px,3vw,40px)}
+  .prompt::before{content:"„";font-size:1.4em;color:var(--amber);opacity:.6;margin-right:.05em}
+
+  .pillrow{display:flex;gap:12px;flex-wrap:wrap;margin-top:clamp(24px,3vw,38px)}
+  .pill{border:1px solid var(--line);border-radius:100px;padding:10px 20px;font-size:clamp(13px,1.2vw,16px);
+    color:var(--muted);background:rgba(255,255,255,.02)}
+  .pill.on{border-color:var(--amber);color:var(--amber-soft);background:rgba(232,163,61,.07)}
+
+  .flow{display:flex;align-items:center;gap:clamp(10px,1.4vw,22px);flex-wrap:wrap;margin-top:clamp(28px,3.4vw,48px)}
+  .node{border:1px solid var(--line);border-radius:14px;padding:clamp(16px,1.6vw,24px) clamp(18px,1.8vw,28px);
+    text-align:center;background:linear-gradient(180deg,rgba(255,255,255,.03),transparent)}
+  .node .t{font-size:clamp(15px,1.4vw,19px);font-weight:600}
+  .node .s{font-size:12px;color:var(--faint);margin-top:5px;letter-spacing:.04em}
+  .node.power{border-color:rgba(232,163,61,.4)}
+  .arrow{color:var(--faint);font-size:clamp(16px,1.6vw,22px)}
+
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:clamp(20px,2.4vw,44px);margin-top:clamp(26px,3vw,42px)}
+  .two h3{font-family:var(--serif);font-size:clamp(20px,2vw,28px);margin-bottom:14px}
+  .two .basis h3{color:var(--cool)} .two .power h3{color:var(--amber)}
+  .two ul{list-style:none} .two li{padding:9px 0;color:var(--muted);font-size:clamp(14px,1.3vw,17px);
+    border-bottom:1px solid var(--line);display:flex;gap:10px}
+  .two li::before{content:"—";color:var(--faint)}
+
+  .center{align-items:center;text-align:center}
+  .center .lead{margin-left:auto;margin-right:auto}
+  .daybadge{font-family:var(--serif);font-size:clamp(120px,22vw,300px);line-height:.8;color:transparent;
+    -webkit-text-stroke:1.5px rgba(232,163,61,.55);opacity:.9}
+  .quote{font-family:var(--serif);font-size:clamp(28px,4.4vw,60px);line-height:1.18;max-width:18ch}
+  .sig{color:var(--muted);margin-top:clamp(24px,3vw,40px);font-size:clamp(14px,1.3vw,17px);letter-spacing:.05em}
+
+  @media (max-width:760px){
+    .two{grid-template-columns:1fr}
+    .row{flex-direction:column}
+    .hint{display:none}
+    .flow{flex-direction:column;align-items:stretch}
+    .arrow{transform:rotate(90deg);text-align:center}
+  }
+  .nav-zone{position:fixed;top:0;bottom:0;width:18%;z-index:20;cursor:pointer}
+  .nav-zone.left{left:0} .nav-zone.right{right:0}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <span class="title">KI als Lernbegleiter</span>
+  <span class="day" id="dayLabel"></span>
+</div>
+
+<div class="deck" id="deck">
+
+  <!-- 1 TITLE -->
+  <section class="slide center" data-day="">
+    <div class="kicker" style="justify-content:center">Bildungsurlaub · HBUG anerkannt</div>
+    <h1 class="xl">KI als<br>Lernbegleiter</h1>
+    <p class="lead">Das Werkzeug zum <em class="hl">Fragen</em> bringen — nicht zum Antworten.<br>Lernen, das bleibt. Wissen, das dir gehört.</p>
+    <div class="sig">3-Tage-Intensivkurs · Robert Meyer</div>
+  </section>
+
+  <!-- 2 AGENDA -->
+  <section class="slide" data-day="Überblick">
+    <div class="kicker">Die Reise in drei Tagen</div>
+    <h1 class="lg">Vom Konsumenten<br>zum Denker mit Datenhoheit</h1>
+    <div class="row">
+      <div class="card"><div class="n">01</div><h3>Tag 1 · Das Problem</h3><p>Warum „fragen → Antwort" dein Denken schwächt — und der Paradigmenwechsel.</p></div>
+      <div class="card"><div class="n">02</div><h3>Tag 2 · Die Methode</h3><p>Der optimierte Lernpfad. Erste Praxis mit NotebookLM.</p></div>
+      <div class="card"><div class="n">03</div><h3>Tag 3 · Das System</h3><p>Dein Second Brain, Datenhoheit und die gesellschaftliche Verantwortung.</p></div>
+    </div>
+  </section>
+
+  <!-- 3 DAY 1 DIVIDER -->
+  <section class="slide center" data-day="Tag 1">
+    <div class="daybadge">1</div>
+    <h1 class="lg" style="margin-top:-1.2vw">Das Problem &amp; der Paradigmenwechsel</h1>
+    <p class="lead">Bevor wir Werkzeuge lernen, klären wir: Was läuft heute falsch?</p>
+  </section>
+
+  <!-- 4 EXPERIMENT -->
+  <section class="slide" data-day="Tag 1 · Einstieg">
+    <div class="kicker">Live-Experiment</div>
+    <h1 class="lg">Schreibt jetzt euren<br>typischen KI-Prompt.</h1>
+    <p class="lead">Zu einem Thema, das ihr gerade verstehen wollt.<br><strong>Notiert ihn.</strong> Wir kommen darauf zurück — und ihr werdet überrascht sein.</p>
+  </section>
+
+  <!-- 5 STANDORT -->
+  <section class="slide" data-day="Tag 1 · Standort">
+    <div class="kicker">Standortbestimmung</div>
+    <h1 class="lg">Was ist ein LLM<br><span style="color:var(--muted)">eigentlich</span>?</h1>
+    <div class="pillrow">
+      <span class="pill on">Wahrscheinlichkeits-Maschine</span>
+      <span class="pill on">Brillanter Mustererkenner</span>
+      <span class="pill">kein Faktenspeicher</span>
+      <span class="pill">kein Bewusstsein</span>
+      <span class="pill">halluziniert überzeugend</span>
+    </div>
+    <p class="lead">Chancen und Grenzen ehrlich verstehen — das ist die Grundlage für alles Weitere.</p>
+  </section>
+
+  <!-- 6 THE TRAP -->
+  <section class="slide" data-day="Tag 1 · Die Falle">
+    <div class="kicker" style="color:#e07b53">Die Falle</div>
+    <h1 class="lg">„Frage &rarr; Antwort"<br>ist Gift fürs Lernen.</h1>
+    <p class="lead">Jede Antwort, die du dir holst, statt sie dir zu erarbeiten, ist eine <em class="hl">ausgelagerte Denkleistung</em>. Genau die Anstrengung, die Lernen erst erzeugt — du gibst sie weg.</p>
+  </section>
+
+  <!-- 7 STAT MIT -->
+  <section class="slide center" data-day="Tag 1 · Cognitive Offloading">
+    <div class="stat">–55%</div>
+    <p class="stat-cap">geringere neuronale Konnektivität bei reiner KI-Nutzung. Die Forscher nennen es <em class="hl">„kognitive Schuld".</em></p>
+    <div class="source">MIT Media Lab · „Your Brain on ChatGPT" · 2025</div>
+  </section>
+
+  <!-- 8 STAT studies -->
+  <section class="slide" data-day="Tag 1 · Cognitive Offloading">
+    <div class="kicker">Die Studienlage ist eindeutig</div>
+    <h1 class="md">Je mehr wir der KI vertrauen,<br>desto weniger denken wir selbst.</h1>
+    <div class="row">
+      <div class="card"><div class="n">MS / CMU</div><h3>2025</h3><p>Höheres Vertrauen in die KI korreliert mit messbar weniger kritischem Denken.</p></div>
+      <div class="card"><div class="n">Gerlich</div><h3>2025</h3><p>Negative Korrelation KI-Nutzung ↔ kritisches Denken — am stärksten bei jungen Nutzern.</p></div>
+      <div class="card"><div class="n">Bjork</div><h3>Desirable Difficulties</h3><p>Anstrengung ist kein Bug des Lernens. Sie ist der Mechanismus.</p></div>
+    </div>
+  </section>
+
+  <!-- 9 SHIFT -->
+  <section class="slide center" data-day="Tag 1 · Paradigmenwechsel">
+    <div class="kicker" style="justify-content:center">Der Paradigmenwechsel</div>
+    <h1 class="xl">Bring die KI<br>zum <em class="hl">Fragen.</em></h1>
+    <p class="lead">Nicht das LLM soll dich klüger wirken lassen.<br>Es soll <strong>dich</strong> klüger machen.</p>
+  </section>
+
+  <!-- 10 SOKRATISCH -->
+  <section class="slide" data-day="Tag 1 · Methode 1">
+    <div class="kicker">Methode 1 — Maieutik</div>
+    <h1 class="md">Sokratisches Fragen</h1>
+    <div class="prompt">Agiere als sokratischer Tutor. Stelle mir durchdachte, stufenweise Fragen zum Thema — führe mich zum eigenständigen Denken, ohne mir die Antwort zu geben.</div>
+    <p class="lead">Erinnert ihr euch an euren Prompt von vorhin? <strong>Das</strong> ist der Unterschied.</p>
+  </section>
+
+  <!-- 11 DAY 2 DIVIDER -->
+  <section class="slide center" data-day="Tag 2">
+    <div class="daybadge">2</div>
+    <h1 class="lg" style="margin-top:-1.2vw">Der optimierte Lernpfad</h1>
+    <p class="lead">Vier Methoden. Jede mit echter Lernwissenschaft dahinter.</p>
+  </section>
+
+  <!-- 12 PATH TABLE -->
+  <section class="slide" data-day="Tag 2 · Der Pfad">
+    <div class="kicker">Aus Harvard &amp; Stanford abgeleitet</div>
+    <h1 class="md">Vier Schritte, vier Prinzipien</h1>
+    <table class="path">
+      <thead><tr><th>Schritt</th><th>Ziel</th><th>Lernwissenschaft</th></tr></thead>
+      <tbody>
+        <tr><td>1 · Sokratisch fragen</td><td>Denkprozesse anregen</td><td>Maieutik</td></tr>
+        <tr><td>2 · Multi-Level erklären</td><td>Tiefenverständnis</td><td>Feynman · Self-Explanation</td></tr>
+        <tr><td>3 · Selbst erklären</td><td>Transfer &amp; Reflexion</td><td>Generation- · Protégé-Effekt</td></tr>
+        <tr><td>4 · Bloom-Taxonomie</td><td>Anwendung &amp; Kreation</td><td>Kompetenzstufung</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 13 MULTILEVEL -->
+  <section class="slide" data-day="Tag 2 · Methode 2">
+    <div class="kicker">Methode 2 — Feynman</div>
+    <h1 class="md">Multi-Level-Erklärung</h1>
+    <div class="row">
+      <div class="card"><div class="n">L1</div><h3>Für ein Kind</h3><p>Bildhaft, einfach, mit Alltags-Analogien.</p></div>
+      <div class="card"><div class="n">L2</div><h3>Für Studierende</h3><p>Strukturiert, fachlich solide, korrekte Terminologie.</p></div>
+      <div class="card"><div class="n">L3</div><h3>Für Forschende</h3><p>Tief, theoretisch, vernetzt mit Nachbarkonzepten.</p></div>
+    </div>
+    <p class="lead">Wer drei Ebenen erklären kann, hat verstanden. Wo es hakt — da ist die Lücke.</p>
+  </section>
+
+  <!-- 14 PERSPEKTIVE -->
+  <section class="slide" data-day="Tag 2 · Methode 3">
+    <div class="kicker">Methode 3 — Generation-Effekt</div>
+    <h1 class="md">Du erklärst.<br>Die KI prüft.</h1>
+    <p class="lead">Du erklärst das Thema auf drei Ebenen — die KI bewertet Verständlichkeit und Korrektheit, benennt Missverständnisse und stellt <em class="hl">eine vertiefende Rückfrage</em>. Lernen durch Lehren.</p>
+  </section>
+
+  <!-- 15 BLOOM -->
+  <section class="slide" data-day="Tag 2 · Methode 4">
+    <div class="kicker">Methode 4 — Bloom-Taxonomie</div>
+    <h1 class="md">Eine Lernreise<br>über sechs Stufen</h1>
+    <div class="pillrow">
+      <span class="pill on">Erinnern</span><span class="pill on">Verstehen</span>
+      <span class="pill on">Anwenden</span><span class="pill on">Analysieren</span>
+      <span class="pill on">Evaluieren</span><span class="pill on">Kreieren</span>
+    </div>
+    <p class="lead">Zu jeder Stufe eine konkrete Aufgabe + Feedbackkriterien. Vom Fakt bis zur eigenen Idee.</p>
+  </section>
+
+  <!-- 16 META -->
+  <section class="slide" data-day="Tag 2 · Ritual">
+    <div class="kicker">Das wiederkehrende Ritual</div>
+    <h1 class="md">Metareflexion</h1>
+    <div class="prompt">Welche Lernmuster erkennst du bei mir? Wo ist mein Denken klar, wo undeutlich? Welche Übung würde mir helfen, tiefer zu verstehen?</div>
+    <p class="lead">Der eigentliche Kern: <strong>merken, wann ich auslagere statt zu denken.</strong></p>
+  </section>
+
+  <!-- 17 NOTEBOOKLM -->
+  <section class="slide" data-day="Tag 2 · Praxis">
+    <div class="kicker">Hands-on · für alle</div>
+    <h1 class="lg">NotebookLM</h1>
+    <p class="lead">Dein eigener RAG ohne Installation. Eigene Quellen rein — Skript, PDF, Video — und die KI antwortet <em class="hl">nur aus deinem Material.</em> Keine Halluzination. Wir bringen sie zum sokratischen Fragen.</p>
+    <div class="pillrow">
+      <span class="pill on">Browserbasiert</span><span class="pill on">Quellen-belegt</span><span class="pill on">Null Setup</span>
+    </div>
+  </section>
+
+  <!-- 18 DAY 3 DIVIDER -->
+  <section class="slide center" data-day="Tag 3">
+    <div class="daybadge">3</div>
+    <h1 class="lg" style="margin-top:-1.2vw">Das System &amp; die Gesellschaft</h1>
+    <p class="lead">Wissen, das bleibt. Daten, die dir gehören. Verantwortung, die wir teilen.</p>
+  </section>
+
+  <!-- 19 SECOND BRAIN -->
+  <section class="slide" data-day="Tag 3 · Second Brain">
+    <div class="kicker">Warum überhaupt speichern?</div>
+    <h1 class="lg">Bau dir ein<br>zweites Gehirn.</h1>
+    <p class="lead">Für <strong>dich</strong>: der Überblick, wo du stehst.<br>Für die <strong>KI</strong>: der Kontext, der mit dir wächst und genau weiß, was du schon kannst.</p>
+    <div class="sig">Tiago Forte · PARA   ·   Niklas Luhmann · Zettelkasten</div>
+  </section>
+
+  <!-- 20 DATENHOHEIT two paths -->
+  <section class="slide" data-day="Tag 3 · Datenhoheit">
+    <div class="kicker">Lokal — denn es ist dein Wissen</div>
+    <h1 class="md">Zwei Wege, ein Ziel</h1>
+    <div class="two">
+      <div class="basis">
+        <h3>Basis-Pfad · für alle</h3>
+        <ul>
+          <li>Obsidian + KI</li>
+          <li>Markdown-Notizen, die du besitzt</li>
+          <li>Verlinktes Second Brain</li>
+          <li>Heute gemeinsam einrichtbar</li>
+        </ul>
+      </div>
+      <div class="power">
+        <h3>Power-Pfad · Live-Demo</h3>
+        <ul>
+          <li>claude-mem als KI-Gedächtnis</li>
+          <li>Tool-übergreifend: Codex weiß, was Claude lernte</li>
+          <li>Neo4j-Graph deines Wissensstands</li>
+          <li>Optional installierbar</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 21 POWER FLOW -->
+  <section class="slide" data-day="Tag 3 · Power-Demo">
+    <div class="kicker">Wie das System zusammenspielt</div>
+    <h1 class="md">Dein Wissen, vernetzt</h1>
+    <div class="flow">
+      <div class="node"><div class="t">Lern-Session</div><div class="s">sokratisch · Bloom</div></div>
+      <span class="arrow">→</span>
+      <div class="node power"><div class="t">claude-mem</div><div class="s">lokales Gedächtnis</div></div>
+      <span class="arrow">→</span>
+      <div class="node power"><div class="t">Neo4j-Graph</div><div class="s">Wissensstand sichtbar</div></div>
+      <span class="arrow">→</span>
+      <div class="node"><div class="t">Nächste Session</div><div class="s">weiß, wo du stehst</div></div>
+    </div>
+    <p class="lead">Spaced Repetition, Stuck-Detection, Lernpfad-Vorschläge — automatisch, lokal, deins.</p>
+  </section>
+
+  <!-- 22 ETHICS -->
+  <section class="slide" data-day="Tag 3 · Ethik &amp; Gesellschaft">
+    <div class="kicker" style="color:var(--cool)">Diskussion — politische Bildung</div>
+    <h1 class="md">Wem gehört dein Denken?</h1>
+    <div class="row">
+      <div class="card"><div class="n">$</div><h3>Geschäftsmodell</h3><p>Dein Gespräch als Trainingsdaten. Wer profitiert?</p></div>
+      <div class="card"><div class="n">⚖</div><h3>Bias &amp; Gerechtigkeit</h3><p>Wessen Wissen reproduziert die KI — und wessen nicht?</p></div>
+      <div class="card"><div class="n">🌱</div><h3>Datenschutz &amp; Umwelt</h3><p>Datenhoheit und Ressourcen als Bürgerentscheidung.</p></div>
+    </div>
+  </section>
+
+  <!-- 23 LERNVERTRAG -->
+  <section class="slide center" data-day="Tag 3 · Abschluss">
+    <div class="kicker" style="justify-content:center">Dein Abschluss</div>
+    <h1 class="lg">Der KI-Lernvertrag</h1>
+    <p class="lead">Eine Selbstverpflichtung: Wie nutze ich KI ab heute, damit ich <em class="hl">lerne</em> — und nicht verlerne?</p>
+  </section>
+
+  <!-- 24 CLOSE -->
+  <section class="slide center" data-day="">
+    <div class="quote" style="margin:0 auto">„Bring die KI zum Fragen,<br>damit du selbst zum Denken kommst."</div>
+    <div class="sig">Danke. — Robert Meyer</div>
+  </section>
+
+</div>
+
+<div class="nav-zone left" id="navLeft"></div>
+<div class="nav-zone right" id="navRight"></div>
+<div class="progress" id="progress"></div>
+<div class="counter"><b id="cur">1</b> / <span id="total">24</span></div>
+<div class="hint"><kbd>←</kbd><kbd>→</kbd> Navigieren · <kbd>F</kbd> Vollbild · <kbd>1–3</kbd> Tag</div>
+
+<script>
+(function(){
+  const slides=[...document.querySelectorAll('.slide')];
+  const total=slides.length;
+  let i=0;
+  const progress=document.getElementById('progress');
+  const cur=document.getElementById('cur');
+  const dayLabel=document.getElementById('dayLabel');
+  document.getElementById('total').textContent=total;
+  // day jump anchors: first slide of each "Tag N"
+  const dayStarts={1:slides.findIndex(s=>s.dataset.day==='Tag 1'),
+                   2:slides.findIndex(s=>s.dataset.day==='Tag 2'),
+                   3:slides.findIndex(s=>s.dataset.day==='Tag 3')};
+  function render(){
+    slides.forEach((s,n)=>{
+      s.classList.toggle('active',n===i);
+      s.classList.toggle('past',n<i);
+    });
+    progress.style.width=((i+1)/total*100)+'%';
+    cur.textContent=i+1;
+    dayLabel.textContent=slides[i].dataset.day||'';
+  }
+  function go(n){i=Math.max(0,Math.min(total-1,n));render();}
+  function next(){go(i+1);} function prev(){go(i-1);}
+  document.addEventListener('keydown',e=>{
+    if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();next();}
+    else if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();prev();}
+    else if(e.key==='Home'){go(0);}
+    else if(e.key==='End'){go(total-1);}
+    else if(e.key.toLowerCase()==='f'){
+      if(!document.fullscreenElement)document.documentElement.requestFullscreen?.();
+      else document.exitFullscreen?.();
+    }
+    else if(['1','2','3'].includes(e.key)&&dayStarts[e.key]>-1){go(dayStarts[e.key]);}
+  });
+  document.getElementById('navRight').addEventListener('click',next);
+  document.getElementById('navLeft').addEventListener('click',prev);
+  // touch
+  let x0=null;
+  document.addEventListener('touchstart',e=>x0=e.touches[0].clientX,{passive:true});
+  document.addEventListener('touchend',e=>{
+    if(x0===null)return;const dx=e.changedTouches[0].clientX-x0;
+    if(Math.abs(dx)>50){dx<0?next():prev();}x0=null;
+  },{passive:true});
+  render();
+})();
+</script>
+</body>
+</html>
