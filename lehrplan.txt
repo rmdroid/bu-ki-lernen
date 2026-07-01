@@ -1,0 +1,273 @@
+LEHRPLAN & REDEPLAN – BILDUNGSURLAUB "KI ALS LERNBEGLEITER" (HBUG anerkannt)
+=============================================================================
+(interne Trainer-Fassung: Zeit-, Rede- und Übersichtsplan mit rotem Faden)
+
+Kurszeiten:      täglich 9:00 – 16:00 Uhr (7 Std.)
+Pausen (fix):    30 Min Mittagspause + 2 × 15 Min Kleine Pause = 60 Min
+Fester Rhythmus: Kleine Pause ca. 11:00 · Mittag ca. 12:15 · Kleine Pause ca. 13:45
+Jeder Tag:       Vorstellungs-/Check-in-Runde zu Beginn, Feedbackrunde zum Abschluss
+
+Legende Bezug:   [F x] = Präsentationsfolie x   ·   [INT] = interaktive Seite (Quiz / Prompt-Labor)
+
+
+=============================================================================
+TAG 1 – DAS PROBLEM & DER PARADIGMENWECHSEL
+=============================================================================
+
+Lernziele des Tages:
+ - Grundverständnis eines LLM (Chancen, Grenzen, Halluzination)
+ - Cognitive Offloading verstehen und kritisch einordnen
+ - Sokratisches Fragen selbst anwenden können
+
+-----------------------------------------------------------------------------
+09:00 – 09:30  (30) ANKOMMEN & VORSTELLUNGSRUNDE                        [F 1–2]
+   Kernbotschaft: "Die meisten nutzen KI falsch fürs Lernen – wir drehen das um."
+   - Begrüßung, kurz zu mir und zum HBUG-Rahmen
+   - Organisatorisches: Zeiten, Pausenrhythmus, WLAN, Materialien
+   - Vorstellungsrunde – Frage an alle: Name, Beruf, "Wie oft und wofür nutzen
+     Sie KI?", eine Erwartung an den Kurs
+   - Überblick 3 Tage: Problem → Methoden → System & Gesellschaft
+
+-----------------------------------------------------------------------------
+09:30 – 10:15  (45) MODUL 1 · EINSTIEGS-EXPERIMENT                      [F 3–4]
+   Kernbotschaft: erst erleben, dann erklären.
+   - Impulsfrage in die Runde: "Wie sieht Ihr typischer KI-Prompt aus?"
+   - Übung (Einzel): jede/r tippt den eigenen "faulen" Prompt zu einem Thema,
+     das sie/er gerade verstehen will → NICHT wegwerfen, wir brauchen ihn nachmittags
+   - 2–3 Beispiele laut vorlesen lassen, unkommentiert stehen lassen
+   - Ankündigung: "Wir kommen am Nachmittag darauf zurück – Sie werden überrascht sein"
+
+-----------------------------------------------------------------------------
+10:15 – 11:00  (45) MODUL 2 · STANDORTBESTIMMUNG: WAS IST EIN LLM? [F 5] [INT]
+   Kernbotschaft: Ein LLM weiß nicht – es rät plausibel.
+   - Wahrscheinlichkeitsmaschine: sagt das nächste Wort voraus, Wort für Wort
+   - Brillanter Mustererkenner, aber kein Faktenspeicher, kein Bewusstsein
+   - Halluzination: erfindet überzeugend (Beispiel: erfundene Buchtitel/Quellen)
+   - Chancen & Grenzen im Zuruf sammeln (Flipchart)
+   - Interaktiv: Quiz-Fragen zu LLM-Grundlagen gemeinsam am Beamer
+   - Übergang: "Wenn es die Wahrheit nicht kennt – wie nutzen wir es dann klug?"
+
+-----------------------------------------------------------------------------
+11:00 – 11:15  (15) ☕ KLEINE PAUSE
+
+-----------------------------------------------------------------------------
+11:15 – 12:15  (60) MODUL 3 · DIE FALLE: COGNITIVE OFFLOADING          [F 6–8]
+   Kernbotschaft: Die bequeme Antwort kostet Verständnis.
+   - Begriff Cognitive Offloading: Denkleistung an ein Werkzeug auslagern
+   - Studienlage:
+       · MIT Media Lab 2025: geringere neuronale Konnektivität, "kognitive Schuld"
+       · Microsoft/CMU 2025: mehr Vertrauen in die KI = weniger kritisches Denken
+       · Gerlich 2025: negativ korreliert, am stärksten bei jungen Nutzern
+   - Bjork: wünschenswerte Schwierigkeiten – die Anstrengung IST der Lernmechanismus
+   - Partnerübung: A erklärt B ein gerade "verstandenes" Thema laut → wo stockt es?
+   - Kurzdiskussion (gesellschaftlicher Haken): "Wer wächst hier – das Modell oder ich?"
+
+-----------------------------------------------------------------------------
+12:15 – 12:45  (30) 🍽 MITTAGSPAUSE
+
+-----------------------------------------------------------------------------
+12:45 – 13:45  (60) MODUL 4 · DER PARADIGMENWECHSEL             [F 9–10] [INT]
+   Kernbotschaft: Die KI zum Fragen bringen, nicht zum Antworten.
+   - Die Richtung umdrehen: nicht "gib mir die Antwort", sondern "bring mich zur Antwort"
+   - Drei Zutaten eines guten Lern-Prompts: ROLLE · AUFGABE · EINSCHRÄNKUNG
+   - Sokratisches Fragen / Maieutik (Sokrates, der Sklavenjunge im "Menon")
+   - AUSBLICK SKILLS (Faden legen): "Wer solche Prompts nicht jedes Mal neu tippen
+     will, kann sie als wiederverwendbaren 'Skill' speichern – das ist das nächste
+     Level des Promptings. Wie das geht, zeige ich an Tag 3."
+   - Geführte Promptübung (Partner): sokratischen Prompt am eigenen Thema starten
+
+-----------------------------------------------------------------------------
+13:45 – 14:00  (15) ☕ KLEINE PAUSE
+
+-----------------------------------------------------------------------------
+14:00 – 15:15  (75) MODUL 5 · SOKRATISCH FRAGEN – PRAXIS         [F 10] [INT]
+   Kernbotschaft: Selbst denken fühlt sich anders an – und bleibt.
+   - Geführte Promptübung: jede/r führt ein 15–20-min sokratisches KI-Gespräch
+     zum eigenen Thema (Prompt-Labor als Vorlage)
+   - Rückgriff auf den Einstieg: fauler Prompt von heute früh vs. sokratisches
+     Gespräch jetzt → den Unterschied bewusst machen (Aha-Moment)
+   - Kleingruppe (3er): Was war anders? Wo wurde es unbequem?
+   - Metareflexion: "Habe ich gedacht oder denken lassen?"
+
+-----------------------------------------------------------------------------
+15:15 – 15:45  (30) MODUL 6 · SICHERUNG, NOTEBOOKLM-TEASER & AUSBLICK    [F 17]
+   - Zusammenfassung Tag 1 in einem Satz
+   - NotebookLM kurz LIVE zeigen (5–10 Min): was es ist, wie die Oberfläche
+     aussieht, Quelle rein → Frage → Zitatmarke. Nur anteasern, nicht vertiefen.
+   - HAUSAUFGABE für Tag 2 (damit wir morgen direkt starten können):
+       · Google-Konto bereithalten (für NotebookLM nötig)
+       · NotebookLM einmal öffnen und anschauen
+       · Optional: eine eigene Quelle mitbringen (Skript, PDF, Kapitel)
+   - Vorschau Tag 2: der optimierte Lernpfad + Praxis mit NotebookLM
+
+-----------------------------------------------------------------------------
+15:45 – 16:00  (15) 🗣 FEEDBACKRUNDE
+   - Blitzlicht: "Was nehme ich mit? Was blieb unklar?"
+
+
+=============================================================================
+TAG 2 – DER OPTIMIERTE LERNPFAD & DAS ERSTE WERKZEUG
+=============================================================================
+
+Lernziele des Tages:
+ - Die vier Methoden des Lernpfads anwenden können
+ - NotebookLM als eigenen quellengestützten RAG nutzen
+ - Metareflexion als festes Ritual etablieren
+
+-----------------------------------------------------------------------------
+09:00 – 09:20  (20) ANKOMMEN & CHECK-IN                              [F 11–12]
+   - Kurzrunde: ein Satz zu gestern / eine offene Frage
+   - Kurz-Check (organisatorisch für nachmittags): Google-Konto da? NotebookLM
+     schon angeschaut? Eigene Quelle dabei?
+   - Überblick über die vier Methoden des Lernpfads (Trenner + Übersichtsfolie)
+
+-----------------------------------------------------------------------------
+09:20 – 10:20  (60) MODUL 1 · MULTI-LEVEL-ERKLÄRUNG (FEYNMAN)     [F 13] [INT]
+   Kernbotschaft: Wer auf drei Ebenen erklären kann, hat verstanden.
+   - Feynman-Idee: erst durchdrungen, wenn kindgerecht erklärbar
+   - Drei Ebenen: Kind / Studierende / Forschende
+   - Der Lerngewinn steckt in den SPRÜNGEN dazwischen (dort sitzen die Lücken)
+   - Übung: Level 2 zuerst SELBST formulieren, dann mit der KI-Version vergleichen
+
+-----------------------------------------------------------------------------
+10:20 – 11:00  (40) MODUL 2 · PERSPEKTIVWECHSEL & KI-FEEDBACK          [F 14]
+   Kernbotschaft: Lernen durch Lehren – die Rollen tauschen.
+   - Protégé-Effekt & Generation-Effekt kurz erklären
+   - Jetzt erkläre ICH, die KI prüft: Bewertung + Missverständnisse + Rückfrage
+   - Partnerübung: der KI erklären, dann das Feedback gemeinsam auswerten
+
+-----------------------------------------------------------------------------
+11:00 – 11:15  (15) ☕ KLEINE PAUSE
+
+-----------------------------------------------------------------------------
+11:15 – 12:15  (60) MODUL 3 · BLOOM-LERNREISE                    [F 15] [INT]
+   Kernbotschaft: Nicht bei "Verstehen" stehenbleiben – hinauf bis "Kreieren".
+   - Die sechs Stufen: Erinnern · Verstehen · Anwenden · Analysieren · Evaluieren · Kreieren
+   - Der entscheidende Prompt-Trick: "Warten Sie nach jeder Stufe auf meine Antwort"
+   - Geführte Promptübung: Bloom-Lernreise zum eigenen Thema, Stufen durchgehen
+   - Interaktiv: Quiz-Fragen zur Bloom-Taxonomie
+
+-----------------------------------------------------------------------------
+12:15 – 12:45  (30) 🍽 MITTAGSPAUSE
+
+-----------------------------------------------------------------------------
+12:45 – 13:45  (60) MODUL 4 · NOTEBOOKLM – HANDS-ON (TEIL 1)           [F 17]
+   Kernbotschaft: Dein eigener RAG – quellengestützt, mit Belegen statt Halluzination.
+   - RAG einfach erklärt: "Klausur mit offenem Buch" statt aus dem Gedächtnis
+   - Praxis Schritt für Schritt: Notizbuch anlegen → eigene Quelle hochladen →
+     erste Frage → Zitatmarke anklicken und prüfen
+   - (Wer keine eigene Quelle hat: gemeinsame Beispielquelle bereithalten)
+
+-----------------------------------------------------------------------------
+13:45 – 14:00  (15) ☕ KLEINE PAUSE
+
+-----------------------------------------------------------------------------
+14:00 – 15:15  (75) MODUL 5 · NOTEBOOKLM – HANDS-ON (2) + METHODEN [F 16–17] [INT]
+   Kernbotschaft: Der Lernpfad trifft das eigene Material.
+   - Die vier Methoden auf die eigene Quelle anwenden (sokratisch auf eigener Quelle)
+   - Kleingruppe: Ergebnisse und Prompts teilen
+   - Metareflexion + kurze Zwischenstand-Übung (Lernstand festhalten)
+
+-----------------------------------------------------------------------------
+15:15 – 15:45  (30) MODUL 6 · SICHERUNG & AUSBLICK AUF TAG 3
+   - Zusammenfassung des Methoden-Teils
+   - VORSCHAU TAG 3 (Faden für den Abschluss): "Morgen richten wir gemeinsam
+     unser Second Brain mit Obsidian ein. Außerdem stelle ich die erweiterte
+     Version vor – claude-mem + Neo4j in Kombination mit dem Lern-Skill.
+     Wer mag, kann sie danach selbst nachbauen."
+
+-----------------------------------------------------------------------------
+15:45 – 16:00  (15) 🗣 FEEDBACKRUNDE
+   - Blitzlicht
+
+
+=============================================================================
+TAG 3 – DAS SYSTEM (SECOND BRAIN) & DIE GESELLSCHAFT
+=============================================================================
+
+Lernziele des Tages:
+ - Second Brain & Datenhoheit verstehen und einrichten
+ - Das Skill-Konzept als "nächstes Level Prompting" kennenlernen
+ - Ethische/gesellschaftliche Aspekte reflektieren (HBUG-Politikteil)
+ - Eine persönliche Lernstrategie (KI-Lernvertrag) formulieren
+
+-----------------------------------------------------------------------------
+09:00 – 09:20  (20) ANKOMMEN & CHECK-IN                                 [F 18]
+   - Kurzrunde, Rückblick Tag 2, Überblick über Tag 3
+   - Roter Faden: "Wir haben jetzt Methode und Werkzeug – heute bauen wir das
+     System, das alles behält, und ordnen es gesellschaftlich ein."
+
+-----------------------------------------------------------------------------
+09:20 – 10:20  (60) MODUL 1 · SECOND BRAIN: WARUM WISSEN SPEICHERN?    [F 19]
+   Kernbotschaft: Wissen, das bleibt und mit einem wächst.
+   - Second Brain (Tiago Forte / PARA), Zettelkasten (Luhmann, 90.000 Notizen)
+   - Zwei Leser jeder Notiz: (1) ich selbst – Überblick über meinen Stand,
+     (2) die KI – sie kann ansetzen, wo ich stehe
+   - Übung: Speicher-Notiz zu einem gelernten Thema erstellen (Prompt vorgeben)
+
+-----------------------------------------------------------------------------
+10:20 – 11:00  (40) MODUL 2 · DATENHOHEIT: BASIS-WEG OBSIDIAN          [F 20]
+   Kernbotschaft: Ihre Notizen liegen auf Ihrer Festplatte – das ist Datenhoheit.
+   - Obsidian: kostenlose Textdateien, lokal, kein Konto, kein Konzern dazwischen
+   - Verknüpfung von Notizen = eigenes Wissensnetz (im Geist des Zettelkastens)
+   - Praxis: Obsidian (oder einfaches Notizsystem) einrichten, erste verknüpfte Notizen
+
+-----------------------------------------------------------------------------
+11:00 – 11:15  (15) ☕ KLEINE PAUSE
+
+-----------------------------------------------------------------------------
+11:15 – 12:15  (60) MODUL 3 · POWER-WEG, LIVE-DEMO & SKILLS            [F 21]
+   Kernbotschaft: Ein Lernbegleiter, der Sie kennt – und Skills als nächstes Level.
+   - SKILLS erklären (den Faden von Tag 1 aufgreifen):
+       · Was ist ein Skill? Ein wiederverwendbares Prompt- und Workflow-Paket
+       · Statt lange Prompts neu zu tippen: einmal bauen, per Befehl aufrufen
+       · Das ist das "nächste Level Prompting", das ich Tag 1 angekündigt habe
+   - Live-Demo (Trainer-Rechner):
+       · Lern-Skill: führt den kompletten optimierten Lernpfad automatisch
+       · claude-mem: speichert jedes Gespräch, fasst es (mit einem schnellen Modell)
+         zusammen und schreibt die Learnings heraus
+       · Neo4j-Wissensgraph: macht den Lernstand sichtbar, ermöglicht Spaced
+         Repetition, Stuck-Detection und Vorschlag des nächsten Schritts
+   - Botschaft: Nutzer und KI werden "gemeinsam klüger"; Ausblick auf ein
+     generationsübergreifendes Wissensgedächtnis
+   - Optional: gemeinsame Installation für Interessierte ("wer mag, kann nachbauen")
+
+-----------------------------------------------------------------------------
+12:15 – 12:45  (30) 🍽 MITTAGSPAUSE
+
+-----------------------------------------------------------------------------
+12:45 – 13:45  (60) MODUL 4 · ETHIK & GESELLSCHAFT (POLITISCHER TEIL)  [F 22]
+   Kernbotschaft: Nicht was KI kann zählt – sondern wer wir werden, wenn wir sie nutzen.
+   - Impuls entlang der Achsen:
+       · Geschäftsmodell: unser Denken als Trainingsdaten – wem gehört es?
+       · Bias & Bildungsgerechtigkeit: wessen Wissen, welche Sprache, Bezahlschranken
+       · Datenschutz & Datenhoheit (Rückbezug auf Vormittag)
+       · Umwelt: Energie- und Wasserkosten jeder Anfrage
+   - Kleingruppen-Diskussion: Positionen erarbeiten, dann Plenum
+   - Auch die Chance benennen: sokratischer Tutor für jeden – Bildungsgerechtigkeit
+
+-----------------------------------------------------------------------------
+13:45 – 14:00  (15) ☕ KLEINE PAUSE
+
+-----------------------------------------------------------------------------
+14:00 – 15:00  (60) MODUL 5 · DER PERSÖNLICHE KI-LERNVERTRAG           [F 23]
+   Kernbotschaft: Aus Wissen wird Haltung, wenn man sich verpflichtet.
+   - Impuls: die sieben Vorsätze vorstellen
+   - Einzelarbeit: eigenen KI-Lernvertrag formulieren (in eigenen Worten)
+   - Freiwilliges Teilen im Plenum
+
+-----------------------------------------------------------------------------
+15:00 – 15:30  (30) MODUL 6 · TRANSFER & ABSCHLUSS                     [F 24]
+   - Wie geht es weiter? Persönlicher 4-Wochen-Plan
+   - Ressourcen: geschenktes Buch, Präsentation, interaktive Seite
+   - Letzter Merksatz: "Bringen Sie die KI zum Fragen. Den Rest tun Sie selbst."
+
+-----------------------------------------------------------------------------
+15:30 – 16:00  (30) 🗣 ABSCHLUSS-FEEDBACKRUNDE
+   - Ausführliches Feedback / Evaluation, HBUG-Formalitäten, Verabschiedung
+
+
+=============================================================================
+ZEIT-CHECK PRO TAG
+=============================================================================
+Inhalt gesamt: 360 Min  ·  Pausen: 60 Min  ·  Summe: 420 Min (9:00–16:00)
