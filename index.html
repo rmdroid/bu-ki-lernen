@@ -276,6 +276,16 @@ document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
   t.classList.add('on');document.getElementById(t.dataset.t).classList.add('on');
   window.scrollTo({top:0,behavior:'smooth'});
 }));
+// Deep-Link: index.html#lab -> Prompt-Labor, index.html#quiz -> Quiz
+function tabFromHash(){
+  const h=(location.hash||'').replace('#','');
+  if(h==='quiz'||h==='lab'){
+    document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x.dataset.t===h));
+    document.querySelectorAll('.panel').forEach(x=>x.classList.toggle('on',x.id===h));
+  }
+}
+window.addEventListener('hashchange',tabFromHash);
+tabFromHash();
 </script>
 </body>
 </html>

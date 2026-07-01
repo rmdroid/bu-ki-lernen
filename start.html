@@ -435,7 +435,13 @@
     if(x0===null)return;const dx=e.changedTouches[0].clientX-x0;
     if(Math.abs(dx)>50){dx<0?next():prev();}x0=null;
   },{passive:true});
-  render();
+  // Deep-Link: start.html#5 springt zu Folie 5 (1-basiert)
+  function fromHash(){
+    const m=(location.hash||'').match(/(\d+)/);
+    if(m){go(parseInt(m[1],10)-1);} else {render();}
+  }
+  window.addEventListener('hashchange',fromHash);
+  fromHash();
 })();
 </script>
 </body>
