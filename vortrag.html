@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lehr- & Redeplan — KI als Lernbegleiter</title>
+<style>
+  :root{
+    --bg:#FBF9F4;--card:#fff;--ink:#1C1C24;--muted:#6B6B78;--faint:#9a958a;
+    --amber:#C97B1E;--amber2:#E8A33D;--amber-bg:#FCEFD7;--cool:#3E6B82;
+    --line:#E7E1D3;
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,Roboto,Arial,sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.5;
+    -webkit-font-smoothing:antialiased}
+  .wrap{max-width:920px;margin:0 auto;padding:32px 22px 80px}
+
+  /* ---- header ---- */
+  header{border-bottom:2px solid var(--ink);padding-bottom:22px;margin-bottom:8px}
+  .kicker{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--amber);font-weight:700}
+  h1{font-family:var(--serif);font-size:clamp(26px,4vw,40px);font-weight:600;line-height:1.1;margin:8px 0 4px}
+  .sub{color:var(--muted);font-size:15px}
+  .meta{display:flex;flex-wrap:wrap;gap:10px 26px;margin-top:18px;font-size:14px}
+  .meta b{color:var(--ink)} .meta span{color:var(--muted)}
+  .legend{margin-top:16px;font-size:13px;color:var(--muted);display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center}
+  .chip{display:inline-flex;align-items:center;gap:4px;font-family:var(--sans);font-size:12px;font-weight:600;
+    text-decoration:none;border:1px solid var(--amber);color:var(--amber);border-radius:100px;
+    padding:2px 10px;white-space:nowrap;transition:.15s;background:#fff}
+  .chip:hover{background:var(--amber);color:#fff}
+  .chip.int{border-color:var(--cool);color:var(--cool)}
+  .chip.int:hover{background:var(--cool);color:#fff}
+
+  /* ---- day nav ---- */
+  .daynav{position:sticky;top:0;z-index:10;background:var(--bg);padding:14px 0 12px;margin-bottom:8px;
+    display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+  .daynav a{text-decoration:none;font-weight:600;font-size:14px;color:var(--muted);
+    border:1px solid var(--line);border-radius:100px;padding:7px 16px;background:#fff;transition:.15s}
+  .daynav a:hover{border-color:var(--amber);color:var(--amber)}
+  .btn-print{margin-left:auto;cursor:pointer;font-family:var(--sans)}
+
+  /* ---- day ---- */
+  .day{margin-top:34px}
+  .day-head{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+  .day-badge{font-family:var(--serif);font-size:clamp(30px,5vw,46px);color:var(--amber2);
+    -webkit-text-stroke:0;font-weight:700;line-height:1}
+  .day-title{font-family:var(--serif);font-size:clamp(21px,3vw,30px);font-weight:600}
+  .day-head::after{content:"";flex:1;height:6px;background:var(--amber2);border-radius:2px;min-width:30px;align-self:center}
+  .ziele{background:var(--amber-bg);border-radius:12px;padding:14px 18px;margin:16px 0 22px}
+  .ziele h4{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);margin-bottom:6px}
+  .ziele ul{list-style:none;display:grid;gap:4px}
+  .ziele li{padding-left:18px;position:relative;font-size:14px;color:#4a4033}
+  .ziele li::before{content:"→";position:absolute;left:0;color:var(--amber)}
+
+  /* ---- block ---- */
+  .block{display:grid;grid-template-columns:96px 1fr;gap:16px;padding:16px 0;border-bottom:1px solid var(--line)}
+  .time{font-variant-numeric:tabular-nums}
+  .time b{display:block;font-size:16px;font-weight:700}
+  .time span{font-size:12px;color:var(--faint)}
+  .body h3{font-size:16px;font-weight:700;display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:4px}
+  .links{display:inline-flex;gap:6px;flex-wrap:wrap}
+  .kb{font-family:var(--serif);font-style:italic;color:var(--amber);font-size:15px;margin:2px 0 8px}
+  .body ul{list-style:none;display:grid;gap:5px}
+  .body li{padding-left:16px;position:relative;font-size:14px;color:#3a3a44}
+  .body li::before{content:"·";position:absolute;left:3px;color:var(--faint);font-weight:700}
+  .body li ul{margin-top:5px;margin-left:2px}
+  .body li li::before{content:"–"}
+
+  /* ---- pause ---- */
+  .pause{display:flex;align-items:center;justify-content:space-between;gap:12px;
+    background:var(--amber-bg);border-radius:10px;padding:9px 18px;margin:10px 0;
+    font-weight:600;font-size:14px;color:var(--amber)}
+  .pause .t{color:#8a6a2f;font-variant-numeric:tabular-nums}
+
+  /* ---- feedback highlight ---- */
+  .block.feedback .body h3{color:var(--cool)}
+  .footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);
+    font-size:13px;color:var(--muted);text-align:center}
+
+  @media (max-width:560px){
+    .block{grid-template-columns:78px 1fr;gap:12px}
+    .daynav .btn-print{display:none}
+  }
+  @media print{
+    body{background:#fff}
+    .daynav{display:none}
+    .day{page-break-before:always}
+    .day:first-of-type{page-break-before:avoid}
+    .block{page-break-inside:avoid}
+    .chip{border:none;color:var(--muted);padding:0}
+    .chip::after{content:""}
+    a{color:inherit}
+    .wrap{max-width:none;padding:0 8mm}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="kicker">Bildungsurlaub · HBUG anerkannt · interne Trainer-Fassung</div>
+    <h1>KI als Lernbegleiter — Lehr- &amp; Redeplan</h1>
+    <div class="sub">Zeit-, Rede- und Übersichtsplan mit rotem Faden</div>
+    <div class="meta">
+      <span><b>Zeiten:</b> täglich 9:00–16:00 Uhr</span>
+      <span><b>Pausen:</b> 30 Min Mittag + 2 × 15 Min Kleine Pause</span>
+      <span><b>Rhythmus:</b> ~11:00 · ~12:15 · ~13:45</span>
+      <span><b>Pro Tag:</b> 360 Min Inhalt + 60 Min Pause</span>
+    </div>
+    <div class="legend">
+      <span>Verweise:</span>
+      <a class="chip" href="start.html" target="_blank">Folie ↗ = Präsentation (start.html)</a>
+      <a class="chip int" href="index.html#quiz" target="_blank">Quiz ↗</a>
+      <a class="chip int" href="index.html#lab" target="_blank">Prompt-Labor ↗</a>
+    </div>
+  </header>
+
+  <nav class="daynav">
+    <a href="#tag1">Tag 1 · Das Problem</a>
+    <a href="#tag2">Tag 2 · Der Lernpfad</a>
+    <a href="#tag3">Tag 3 · System &amp; Gesellschaft</a>
+    <a class="btn-print" href="javascript:window.print()">🖨 Drucken</a>
+  </nav>
+
+  <!-- ================= TAG 1 ================= -->
+  <section class="day" id="tag1">
+    <div class="day-head"><span class="day-badge">1</span><span class="day-title">Das Problem &amp; der Paradigmenwechsel</span></div>
+    <div class="ziele">
+      <h4>Lernziele des Tages</h4>
+      <ul>
+        <li>Grundverständnis eines LLM (Chancen, Grenzen, Halluzination)</li>
+        <li>Cognitive Offloading verstehen und kritisch einordnen</li>
+        <li>Sokratisches Fragen selbst anwenden können</li>
+      </ul>
+    </div>
+
+    <div class="block">
+      <div class="time"><b>09:00</b><span>30 Min</span></div>
+      <div class="body">
+        <h3>Ankommen &amp; Vorstellungsrunde
+          <span class="links"><a class="chip" href="start.html#1" target="_blank">Folie 1–2 ↗</a></span></h3>
+        <p class="kb">„Die meisten nutzen KI falsch fürs Lernen — wir drehen das um."</p>
+        <ul>
+          <li>Begrüßung, kurz zu mir und zum HBUG-Rahmen</li>
+          <li>Organisatorisches: Zeiten, Pausenrhythmus, WLAN, Materialien</li>
+          <li>Vorstellungsrunde: Name, Beruf, „Wie oft und wofür nutzen Sie KI?", eine Erwartung</li>
+          <li>Überblick 3 Tage: Problem → Methoden → System &amp; Gesellschaft</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="time"><b>09:30</b><span>45 Min</span></div>
+      <div class="body">
+        <h3>Modul 1 · Einstiegs-Experiment
+          <span class="links"><a class="chip" href="start.html#4" target="_blank">Folie 3–4 ↗</a></span></h3>
+        <p class="kb">Erst erleben, dann erklären.</p>
+        <ul>
+          <li>Impulsfrage in die Runde: „Wie sieht Ihr typischer KI-Prompt aus?"</li>
+          <li>Übung (Einzel): eigenen „faulen" Prompt zu einem Thema tippen — <b>nicht wegwerfen</b>, wir brauchen ihn nachmittags</li>
+          <li>2–3 Beispiele laut vorlesen lassen, unkommentiert stehen lassen</li>
+          <li>Ankündigung: „Wir kommen am Nachmittag darauf zurück"</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="time"><b>10:15</b><span>45 Min</span></div>
+      <div class="body">
+        <h3>Modul 2 · Standortbestimmung: Was ist ein LLM?
+          <span class="links"><a class="chip" href="start.html#5" target="_blank">Folie 5 ↗</a><a class="chip int" href="index.html#quiz" target="_blank">Quiz ↗</a></span></h3>
+        <p class="kb">Ein LLM weiß nicht — es rät plausibel.</p>
+        <ul>
+          <li>Wahrscheinlichkeitsmaschine: sagt das nächste Wort voraus, Wort für Wort</li>
+          <li>Brillanter Mustererkenner, aber kein Faktenspeicher, kein Bewusstsein</li>
+          <li>Halluzination: erfindet überzeugend (z. B. erfundene Buchtitel/Quellen)</li>
+          <li>Chancen &amp; Grenzen im Zuruf sammeln (Flipchart)</li>
+          <li>Interaktiv: Quiz-Fragen zu LLM-Grundlagen gemeinsam am Beamer</li>
+          <li>Übergang: „Wenn es die Wahrheit nicht kennt — wie nutzen wir es dann klug?"</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="pause"><span>☕ Kleine Pause</span><span class="t">11:00 · 15 Min</span></div>
+
+    <div class="block">
+      <div class="time"><b>11:15</b><span>60 Min</span></div>
+      <div class="body">
+        <h3>Modul 3 · Die Falle: Cognitive Offloading
+          <span class="links"><a class="chip" href="start.html#6" target="_blank">Folie 6–8 ↗</a></span></h3>
+        <p class="kb">Die bequeme Antwort kostet Verständnis.</p>
+        <ul>
+          <li>Begriff Cognitive Offloading: Denkleistung an ein Werkzeug auslagern</li>
+          <li>Studienlage:
+            <ul>
+              <li>MIT Media Lab 2025: geringere neuronale Konnektivität, „kognitive Schuld"</li>
+              <li>Microsoft/CMU 2025: mehr Vertrauen in die KI = weniger kritisches Denken</li>
+              <li>Gerlich 2025: negativ korreliert, am stärksten bei jungen Nutzern</li>
+            </ul>
+          </li>
+          <li>Bjork: wünschenswerte Schwierigkeiten — die Anstrengung <i>ist</i> der Lernmechanismus</li>
+          <li>Partnerübung: A erklärt B ein „verstandenes" Thema laut → wo stockt es?</li>
+          <li>Kurzdiskussion (gesellschaftlicher Haken): „Wer wächst hier — das Modell oder ich?"</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="pause"><span>🍽 Mittagspause</span><span class="t">12:15 · 30 Min</span></div>
+
+    <div class="block">
+      <div class="time"><b>12:45</b><span>60 Min</span></div>
+      <div class="body">
+        <h3>Modul 4 · Der Paradigmenwechsel
+          <span class="links"><a class="chip" href="start.html#9" target="_blank">Folie 9–10 ↗</a><a class="chip int" href="index.html#lab" target="_blank">Prompt-Labor ↗</a></span></h3>
+        <p class="kb">Die KI zum Fragen bringen, nicht zum Antworten.</p>
+        <ul>
+          <li>Die Richtung umdrehen: nicht „gib mir die Antwort", sondern „bring mich zur Antwort"</li>
+          <li>Drei Zutaten eines guten Lern-Prompts: <b>Rolle · Aufgabe · Einschränkung</b></li>
+          <li>Sokratisches Fragen / Maieutik (Sokrates, der Sklavenjunge im „Menon")</li>
+          <li><b>Ausblick Skills</b> (Faden legen): „Wer solche Prompts nicht jedes Mal neu tippt, speichert sie als wiederverwendbaren <i>Skill</i> — das nächste Level des Promptings. Wie das geht, zeige ich an Tag 3."</li>
+          <li>Geführte Promptübung (Partner): sokratischen Prompt am eigenen Thema starten</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="pause"><span>☕ Kleine Pause</span><span class="t">13:45 · 15 Min</span></div>
+
+    <div class="block">
+      <div class="time"><b>14:00</b><span>75 Min</span></div>
+      <div class="body">
+        <h3>Modul 5 · Sokratisch fragen — Praxis
+          <span class="links"><a class="chip" href="start.html#10" target="_blank">Folie 10 ↗</a><a class="chip int" href="index.html#lab" target="_blank">Prompt-Labor ↗</a></span></h3>
+        <p class="kb">Selbst denken fühlt sich anders an — und bleibt.</p>
+        <ul>
+          <li>Geführte Promptübung: jede/r führt ein 15–20-min sokratisches KI-Gespräch zum eigenen Thema</li>
+          <li>Rückgriff auf den Einstieg: fauler Prompt von heute früh vs. sokratisches Gespräch jetzt → Aha-Moment</li>
+          <li>Kleingruppe (3er): Was war anders? Wo wurde es unbequem?</li>
+          <li>Metareflexion: „Habe ich gedacht oder denken lassen?"</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="time"><b>15:15</b><span>30 Min</span></div>
+      <div class="body">
+        <h3>Modul 6 · Sicherung, NotebookLM-Teaser &amp; Ausblick
+          <span class="links"><a class="chip" href="start.html#17" target="_blank">Folie 17 ↗</a></span></h3>
+        <ul>
+          <li>Zusammenfassung Tag 1 in einem Satz</li>
+          <li>NotebookLM kurz <b>live zeigen</b> (5–10 Min): Oberfläche, Quelle rein → Frage → Zitatmarke. Nur anteasern.</li>
+          <li><b>Hausaufgabe für Tag 2</b> (damit wir morgen direkt starten):
+            <ul>
+              <li>Google-Konto bereithalten (für NotebookLM nötig)</li>
+              <li>NotebookLM einmal öffnen und anschauen</li>
+              <li>Optional: eine eigene Quelle mitbringen (Skript, PDF, Kapitel)</li>
+            </ul>
+          </li>
+          <li>Vorschau Tag 2: der optimierte Lernpfad + Praxis mit NotebookLM</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="block feedback">
+      <div class="time"><b>15:45</b><span>15 Min</span></div>
+      <div class="body">
+        <h3>🗣 Feedbackrunde</h3>
+        <ul><li>Blitzlicht: „Was nehme ich mit? Was blieb unklar?"</li></ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= TAG 2 ================= -->
+  <section class="day" id="tag2">
+    <div class="day-head"><span class="day-badge">2</span><span class="day-title">Der optimierte Lernpfad &amp; das erste Werkzeug</span></div>
+    <div class="ziele">
+      <h4>Lernziele des Tages</h4>
+      <ul>
+        <li>Die vier Methoden des Lernpfads anwenden können</li>
+        <li>NotebookLM als eigenen quellengestützten RAG nutzen</li>
+        <li>Metareflexion als festes Ritual etablieren</li>
+      </ul>
+    </div>
+
+    <div class="block">
+      <div class="time"><b>09:00</b><span>20 Min</span></div>
+      <div class="body">
+        <h3>Ankommen &amp; Check-in
+          <span class="links"><a class="chip" href="start.html#11" target="_blank">Folie 11–12 ↗</a></span></h3>
+        <ul>
+          <li>Kurzrunde: ein Satz zu gestern / eine offene Frage</li>
+          <li>Kurz-Check (für nachmittags): Google-Konto da? NotebookLM angeschaut? Eigene Quelle dabei?</li>
+          <li>Überblick über die vier Methoden des Lernpfads (Trenner + Übersichtsfolie)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="time"><b>09:20</b><span>60 Min</span></div>
+      <div class="body">
+        <h3>Modul 1 · Multi-Level-Erklärung (Feynman)
+          <span class="links"><a class="chip" href="start.html#13" target="_blank">Folie 13 ↗</a><a class="chip int" href="index.html#lab" target="_blank">Prompt-Labor ↗</a></span></h3>
+        <p class="kb">Wer auf drei Ebenen erklären kann, hat verstanden.</p>
+        <ul>
+          <li>Feynman-Idee: erst durchdrungen, wenn kindgerecht erklärbar</li>
+          <li>Drei Ebenen: Kind / Studierende / Forschende</li>
+          <li>Der Lerngewinn steckt in den <b>Sprüngen</b> dazwischen (dort sitzen die Lücken)</li>
+          <li>Übung: Level 2 zuerst selbst formulieren, dann mit der KI-Version vergleichen</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="time"><b>10:20</b><span>40 Min</span></div>
+      <div class="body">
+        <h3>Modul 2 · Perspektivwechsel &amp; KI-Feedback
+          <span class="links"><a class="chip" href="start.html#14" target="_blank">Folie 14 ↗</a></span></h3>
+        <p class="kb">Lernen durch Lehren — die Rollen tauschen.</p>
+        <ul>
+          <li>Protégé-Effekt &amp; Generation-Effekt kurz erklären</li>
+          <li>Jetzt erkläre ich, die KI prüft: Bewertung + Missverständnisse + Rückfrage</li>
+          <li>Partnerübung: der KI erklären, dann das Feedback gemeinsam auswerten</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="pause"><span>☕ Kleine Pause</span><span class="t">11:00 · 15 Min</span></div>
+
+    <div class="block">
+      <div class="time"><b>11:15</b><span>60 Min</span></div>
+      <div class="body">
+        <h3>Modul 3 · Bloom-Lernreise
+          <span class="links"><a class="chip" href="start.html#15" target="_blank">Folie 15 ↗</a><a class="chip int" href="index.html#quiz" target="_blank">Quiz ↗</a></span></h3>
+        <p class="kb">Nicht bei „Verstehen" stehenbleiben — hinauf bis „Kreieren".</p>
+        <ul>
+          <li>Die sechs Stufen: Erinnern · Verstehen · Anwenden · Analysieren · Evaluieren · Kreieren</li>
+          <li>Der entscheidende Prompt-Trick: „Warten Sie nach jeder Stufe auf meine Antwort"</li>
+          <li>Geführte Promptübung: Bloom-Lernreise zum eigenen Thema, Stufen durchgehen</li>
+          <li>Interaktiv: Quiz-Fragen zur Bloom-Taxonomie</li>
+          <li>Metareflexion als Abschluss der Methoden <a class="chip" href="start.html#16" target="_blank">Folie 16 ↗</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="pause"><span>🍽 Mittagspause</span><span class="t">12:15 · 30 Min</span></div>
+
+    <div class="block">
+      <div class="time"><b>12:45</b><span>60 Min</span></div>
+      <div class="body">
+        <h3>Modul 4 · NotebookLM — hands-on (Teil 1)
+          <span class="links"><a class="chip" href="start.html#17" target="_blank">Folie 17 ↗</a></span></h3>
+        <p class="kb">Dein eigener RAG — quellengestützt, mit Belegen statt Halluzination.</p>
+        <ul>
+          <li>RAG einfach erklärt: „Klausur mit offenem Buch" statt aus dem Gedächtnis</li>
+          <li>Praxis Schritt für Schritt: Notizbuch anlegen → eigene Quelle hochladen → erste Frage → Zitatmarke prüfen</li>
+          <li>(Wer keine eigene Quelle hat: gemeinsame Beispielquelle bereithalten)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="pause"><span>☕ Kleine Pause</span><span class="t">13:45 · 15 Min</span></div>
+
+    <div class="block">
+      <div class="time"><b>14:00</b><span>75 Min</span></div>
+      <div class="body">
+        <h3>Modul 5 · NotebookLM hands-on (Teil 2) + Methoden
+          <span class="links"><a class="chip" href="start.html#16" target="_blank">Folie 16–17 ↗</a><a class="chip int" href="index.html#lab" target="_blank">Prompt-Labor ↗</a></span></h3>
+        <p class="kb">Der Lernpfad trifft das eigene Material.</p>
+        <ul>
+          <li>Die vier Methoden auf die eigene Quelle anwenden (sokratisch auf eigener Quelle)</li>
+          <li>Kleingruppe: Ergebnisse und Prompts teilen</li>
+          <li>Metareflexion + kurze Zwischenstand-Übung (Lernstand festhalten)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="time"><b>15:15</b><span>30 Min</span></div>
+      <div class="body">
+        <h3>Modul 6 · Sicherung &amp; Ausblick auf Tag 3</h3>
+        <ul>
+          <li>Zusammenfassung des Methoden-Teils</li>
+          <li><b>Vorschau Tag 3:</b> „Morgen richten wir gemeinsam unser Second Brain mit Obsidian ein. Außerdem stelle ich die erweiterte Version vor — claude-mem + Neo4j in Kombination mit dem Lern-Skill. Wer mag, kann sie danach selbst nachbauen."</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="block feedback">
+      <div class="time"><b>15:45</b><span>15 Min</span></div>
+      <div class="body"><h3>🗣 Feedbackrunde</h3><ul><li>Blitzlicht</li></ul></div>
+    </div>
+  </section>
+
+  <!-- ================= TAG 3 ================= -->
+  <section class="day" id="tag3">
+    <div class="day-head"><span class="day-badge">3</span><span class="day-title">Das System (Second Brain) &amp; die Gesellschaft</span></div>
+    <div class="ziele">
+      <h4>Lernziele des Tages</h4>
+      <ul>
+        <li>Second Brain &amp; Datenhoheit verstehen und einrichten</li>
+        <li>Das Skill-Konzept als „nächstes Level Prompting" kennenlernen</li>
+        <li>Ethische/gesellschaftliche Aspekte reflektieren (HBUG-Politikteil)</li>
+        <li>Eine persönliche Lernstrategie (KI-Lernvertrag) formulieren</li>
+      </ul>
+    </div>
+
+    <div class="block">
+      <div class="time"><b>09:00</b><span>20 Min</span></div>
+      <div class="body">
+        <h3>Ankommen &amp; Check-in
+          <span class="links"><a class="chip" href="start.html#18" target="_blank">Folie 18 ↗</a></span></h3>
+        <ul>
+          <li>Kurzrunde, Rückblick Tag 2, Überblick über Tag 3</li>
+          <li>Roter Faden: „Wir haben Methode und Werkzeug — heute bauen wir das System, das alles behält, und ordnen es gesellschaftlich ein."</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="time"><b>09:20</b><span>60 Min</span></div>
+      <div class="body">
+        <h3>Modul 1 · Second Brain: warum Wissen speichern?
+          <span class="links"><a class="chip" href="start.html#19" target="_blank">Folie 19 ↗</a></span></h3>
+        <p class="kb">Wissen, das bleibt und mit einem wächst.</p>
+        <ul>
+          <li>Second Brain (Tiago Forte / PARA), Zettelkasten (Luhmann, 90.000 Notizen)</li>
+          <li>Zwei Leser jeder Notiz: (1) ich selbst — Überblick über meinen Stand, (2) die KI — sie kann ansetzen, wo ich stehe</li>
+          <li>Übung: Speicher-Notiz zu einem gelernten Thema erstellen (Prompt vorgeben)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="time"><b>10:20</b><span>40 Min</span></div>
+      <div class="body">
+        <h3>Modul 2 · Datenhoheit: Basis-Weg Obsidian
+          <span class="links"><a class="chip" href="start.html#20" target="_blank">Folie 20 ↗</a></span></h3>
+        <p class="kb">Ihre Notizen liegen auf Ihrer Festplatte — das ist Datenhoheit.</p>
+        <ul>
+          <li>Obsidian: kostenlose Textdateien, lokal, kein Konto, kein Konzern dazwischen</li>
+          <li>Verknüpfung von Notizen = eigenes Wissensnetz (im Geist des Zettelkastens)</li>
+          <li>Praxis: Obsidian (oder einfaches Notizsystem) einrichten, erste verknüpfte Notizen</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="pause"><span>☕ Kleine Pause</span><span class="t">11:00 · 15 Min</span></div>
+
+    <div class="block">
+      <div class="time"><b>11:15</b><span>60 Min</span></div>
+      <div class="body">
+        <h3>Modul 3 · Power-Weg, Live-Demo &amp; Skills
+          <span class="links"><a class="chip" href="start.html#21" target="_blank">Folie 21 ↗</a></span></h3>
+        <p class="kb">Ein Lernbegleiter, der Sie kennt — und Skills als nächstes Level.</p>
+        <ul>
+          <li><b>Skills erklären</b> (Faden von Tag 1 aufgreifen):
+            <ul>
+              <li>Was ist ein Skill? Ein wiederverwendbares Prompt- und Workflow-Paket</li>
+              <li>Statt lange Prompts neu zu tippen: einmal bauen, per Befehl aufrufen</li>
+              <li>Das „nächste Level Prompting", das ich Tag 1 angekündigt habe</li>
+            </ul>
+          </li>
+          <li><b>Live-Demo</b> (Trainer-Rechner):
+            <ul>
+              <li>Lern-Skill: führt den kompletten optimierten Lernpfad automatisch</li>
+              <li>claude-mem: speichert jedes Gespräch, fasst es zusammen, schreibt die Learnings heraus</li>
+              <li>Neo4j-Wissensgraph: macht den Lernstand sichtbar → Spaced Repetition, Stuck-Detection, nächster Schritt</li>
+            </ul>
+          </li>
+          <li>Botschaft: Nutzer und KI werden „gemeinsam klüger"; Ausblick generationsübergreifendes Wissensgedächtnis</li>
+          <li>Optional: gemeinsame Installation für Interessierte („wer mag, kann nachbauen")</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="pause"><span>🍽 Mittagspause</span><span class="t">12:15 · 30 Min</span></div>
+
+    <div class="block">
+      <div class="time"><b>12:45</b><span>60 Min</span></div>
+      <div class="body">
+        <h3>Modul 4 · Ethik &amp; Gesellschaft (politischer Teil)
+          <span class="links"><a class="chip" href="start.html#22" target="_blank">Folie 22 ↗</a></span></h3>
+        <p class="kb">Nicht was KI kann zählt — sondern wer wir werden, wenn wir sie nutzen.</p>
+        <ul>
+          <li>Impuls entlang der Achsen:
+            <ul>
+              <li>Geschäftsmodell: unser Denken als Trainingsdaten — wem gehört es?</li>
+              <li>Bias &amp; Bildungsgerechtigkeit: wessen Wissen, welche Sprache, Bezahlschranken</li>
+              <li>Datenschutz &amp; Datenhoheit (Rückbezug auf Vormittag)</li>
+              <li>Umwelt: Energie- und Wasserkosten jeder Anfrage</li>
+            </ul>
+          </li>
+          <li>Kleingruppen-Diskussion: Positionen erarbeiten, dann Plenum</li>
+          <li>Auch die Chance benennen: sokratischer Tutor für jeden — Bildungsgerechtigkeit</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="pause"><span>☕ Kleine Pause</span><span class="t">13:45 · 15 Min</span></div>
+
+    <div class="block">
+      <div class="time"><b>14:00</b><span>60 Min</span></div>
+      <div class="body">
+        <h3>Modul 5 · Der persönliche KI-Lernvertrag
+          <span class="links"><a class="chip" href="start.html#23" target="_blank">Folie 23 ↗</a></span></h3>
+        <p class="kb">Aus Wissen wird Haltung, wenn man sich verpflichtet.</p>
+        <ul>
+          <li>Impuls: die sieben Vorsätze vorstellen</li>
+          <li>Einzelarbeit: eigenen KI-Lernvertrag formulieren (in eigenen Worten)</li>
+          <li>Freiwilliges Teilen im Plenum</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="time"><b>15:00</b><span>30 Min</span></div>
+      <div class="body">
+        <h3>Modul 6 · Transfer &amp; Abschluss
+          <span class="links"><a class="chip" href="start.html#24" target="_blank">Folie 24 ↗</a></span></h3>
+        <ul>
+          <li>Wie geht es weiter? Persönlicher 4-Wochen-Plan</li>
+          <li>Ressourcen: geschenktes Buch, Präsentation, interaktive Seite</li>
+          <li>Letzter Merksatz: „Bringen Sie die KI zum Fragen. Den Rest tun Sie selbst."</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="block feedback">
+      <div class="time"><b>15:30</b><span>30 Min</span></div>
+      <div class="body">
+        <h3>🗣 Abschluss-Feedbackrunde</h3>
+        <ul><li>Ausführliches Feedback / Evaluation, HBUG-Formalitäten, Verabschiedung</li></ul>
+      </div>
+    </div>
+  </section>
+
+  <div class="footer">
+    Zeit-Check pro Tag: 360 Min Inhalt + 60 Min Pause = 420 Min (9:00–16:00) &nbsp;·&nbsp; interne Trainer-Fassung
+  </div>
+
+</div>
+</body>
+</html>
