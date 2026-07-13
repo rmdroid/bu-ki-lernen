@@ -26,11 +26,18 @@
   h1{font-family:var(--serif);font-weight:600;font-size:clamp(30px,5vw,52px);line-height:1.05;letter-spacing:-.01em}
   .sub{color:var(--muted);margin-top:14px;font-size:clamp(15px,1.7vw,18px)}
 
-  .tabs{display:flex;gap:8px;justify-content:center;margin-bottom:clamp(26px,3.5vw,40px);
-    background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:100px;padding:6px;width:fit-content;margin-left:auto;margin-right:auto}
+  .tabbar{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;margin-bottom:clamp(26px,3.5vw,40px)}
+  .tabs{display:flex;gap:8px;justify-content:center;
+    background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:100px;padding:6px;width:fit-content}
   .tab{border:none;background:none;color:var(--muted);font-family:var(--sans);font-size:clamp(14px,1.5vw,16px);
     font-weight:600;padding:11px 26px;border-radius:100px;cursor:pointer;transition:.25s;letter-spacing:.01em}
   .tab.on{background:linear-gradient(180deg,var(--amber),#d8902f);color:#1a1206;box-shadow:0 6px 20px rgba(232,163,61,.25)}
+
+  /* ——— Miro Board Link (Button neben den Tabs) ——— */
+  .miro-link{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);color:var(--cool);
+    font-family:var(--sans);font-size:clamp(13px,1.4vw,15px);font-weight:600;padding:11px 22px;border-radius:100px;
+    text-decoration:none;transition:.2s;background:rgba(107,168,201,.06);white-space:nowrap}
+  .miro-link:hover{border-color:var(--cool);background:rgba(107,168,201,.14)}
 
   .panel{display:none;animation:fade .4s ease} .panel.on{display:block}
   @keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
@@ -104,9 +111,17 @@
     <div class="sub">Quiz zur Standortbestimmung &amp; das Prompt-Labor zum Selbermachen.</div>
   </header>
 
-  <div class="tabs">
-    <button class="tab on" data-t="quiz">Quiz</button>
-    <button class="tab" data-t="lab">Prompt-Labor</button>
+  <div class="tabbar">
+    <div class="tabs">
+      <button class="tab on" data-t="quiz">Quiz</button>
+      <button class="tab" data-t="lab">Prompt-Labor</button>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- MIRO BOARD LINK — hier bei Bedarf die URL manuell anpassen:   -->
+    <!-- einfach den Wert im href="..." unten ersetzen.                -->
+    <!-- ============================================================ -->
+    <a class="miro-link" href="https://webwhiteboard.com/" target="_blank" rel="noopener noreferrer">Miro Board Link ↗</a>
   </div>
 
   <!-- QUIZ PANEL -->
